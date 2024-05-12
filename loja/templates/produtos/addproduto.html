@@ -1,0 +1,55 @@
+{% extends 'layouts.html' %}
+
+{% block content %}
+
+{% include '_messages.html' %}
+
+<div class="container">
+    <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8 p-2">
+        <h2 class="text-center bg-success p-2">Cadastrar Produtos</h2>
+
+        {% from "_formhelpers.html" import render_field %}
+        <form action="" method="POST" enctype="multipart/form-data">
+
+            {{ render_field(form.nome, class="form-control", placeholder="Nome do produto")}}
+            {{ render_field(form.preco, class="form-control", placeholder="Preço do produto")}}
+            {{ render_field(form.desconto, class="form-control", placeholder="Desconto do produto")}}
+            {{ render_field(form.estoque, class="form-control", placeholder="Quantidade do produto em estoque")}}
+
+
+            <label for="modelo">Adicionar um Modelo</label>
+            <select name="modelo" id="modelo" class="form-control" required>
+                <option value="">Selecione um modelo</option>
+                {% for modelo in modelos %}
+                <option value="{{modelo.id}}">{{modelo.name}}</option>
+                {% endfor %}
+            </select>
+
+            <label for="tema">Adicionar um Tema</label>
+            <select name="tema" id="tema" class="form-control" required>
+                <option value="">Selecione um tema</option>
+                {% for tema in temas %}
+                <option value="{{tema.id}}">{{tema.name}}</option>
+                {% endfor %}
+            </select>
+
+            {{ render_field(form.cor, class="form-control", placeholder="Cor do produto")}}
+            {{ render_field(form.descricao, class="form-control", placeholder="Descrição do produto",rows="10")}}
+
+            <div class="cointainer">
+                <div class="row">
+                    <div class="col-md-4">{{ render_field(form.imagem_1, class="form-control")}}</div>
+                    <div class="col-md-4">{{ render_field(form.imagem_2, class="form-control")}}</div>
+                    <div class="col-md-4">{{ render_field(form.imagem_3, class="form-control")}}</div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-outline-info mt-4">Cadastrar</button>
+        </form>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,35 @@
+{% extends "layouts.html" %}
+
+{% block content %}
+
+<div class="containner">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            {% include "_messages.html" %}
+
+            {% if atualizarmodelo %}
+
+            <h2 class="text-center mt-5"> Atualizar Modelos </h2>
+            <form action="" method="POST">
+                <input type="text" name="modelo" class="form-control" value="{{atualizarmodelo.name}}">
+                <input type="submit" value="Atualizar Modelo" class="btn btn-success mt-2">
+                        
+            </form>
+            <a href="{{url_for('modelo')}}" class="btn btn-danger"style="margin-top: -65px; margin-left: 158px;">Cancelar</a>
+            {% else %}
+            <h2 class="text-center mt-5">Atualizar Temas</h2>
+            <form action="" method="POST">
+                <input type="text" name="tema" class="form-control" value="{{atualizartema.name}}">
+                <input type="submit" value="Atualizar Tema" class="btn btn-success mt-2">
+
+            </form>
+            <a href="{{url_for('tema')}}" class="btn btn-danger"style="margin-top: -65px; margin-left: 140px;">Cancelar</a>
+            {% endif %}
+        </div>
+        <div class="col-md-3"></div>
+
+    </div>
+</div>
+
+{% endblock content %}
