@@ -13,7 +13,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="/">Home<span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="/">Produtos<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/modelos">Modelos</a>
@@ -24,28 +24,24 @@
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Dropdown
+                Adicionar
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Something else here</a>
+                <a class="dropdown-item" href="addproduto">Produtos</a>
+                <a class="dropdown-item" href="addmodelo">Modelos</a>
+                <a class="dropdown-item" href="addtema">Temas</a>
               </div>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
             </li>
           </ul>
           <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            <input class="form-control mr-sm-2" type="search" placeholder="Digite o texto p/ buscar" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
           </form>
         </div>
       </nav>
 </div>
-<div class="cointainer mt-2">
-    <table class="table table-sm table-striped">
+<div class="cointainer">
+    <table class="table table-sm table-striped">      
         <thead>
             <th>Código</th>
             <th>Nome</th>
@@ -55,15 +51,41 @@
 
         <tbody>
             {% if modelos %}
-            {% for modelo in modelos %}
+            <div class="navbar navbar-expand-lg navbar-light bg-light navbar-brand">Lista de Modelos</div>
+            {% for modelo in modelos %}                                              
             <tr>
                 <td>{{modelo.id}}</td>
                 <td>{{modelo.name}}</td>
                 <td><a href="{{url_for('atualizarmodelo', id=modelo.id)}}" class="btn btn-sm btn-outline-success">Editar</a></td>
-                <td><a href="" class="btn btn-sm btn-outline-warning">Apagar</a></td>
+                <td><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#exampleModal-{{modelo.id}}">Exluir</button></td>
             </tr>
+<div class="modal fade" id="exampleModal-{{modelo.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{modelo.name}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span class="text-danger">Deseja realmente excluir o modelo "{{modelo.name}}"?</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <form action="{{url_for('deletemodelo', id=modelo.id)}}" method="POST">
+          <button type="submit" class="btn btn-danger">Excluir</button>
+        </form>
+            
+        
+      </div>
+    </div>
+  </div>
+</div>
+
             {% endfor %}
             {% else %}
+            <div class="navbar navbar-expand-lg navbar-light bg-light navbar-brand">Lista de Temas</div>
             {% for tema in temas %}
             <tr>
                 <td>{{tema.id}}</td>

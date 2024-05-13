@@ -1,8 +1,8 @@
-from flask import redirect, render_template, url_for, flash, request, session
+from flask import redirect, render_template, url_for, flash, request, session, current_app
 from .forms import Addprodutos
 from loja import db, app, photos
 from .models import Modelo, Tema, Addproduto
-import secrets
+import secrets, os
 
 @app.route('/addmodelo', methods=['GET','POST'])
 def addmodelo():
@@ -76,6 +76,17 @@ def atualizarmodelo(id):
         return redirect(url_for('modelo'))
     return render_template('/produtos/atualizarmodelo.html', title='Atualizar Modelos', atualizarmodelo=atualizarmodelo)
 
+@app.route('/deletemodelo/<int:id>', methods=['GET','POST'])
+def deletemodelo(id):
+    modelo = Modelo.query.get_or_404(id)
+    if request.method=='POST':
+        db.session.delete(modelo)
+        db.session.commit()
+        flash(f'O modelo {modelo.name} foi excluído com sucesso', 'success')
+        return redirect(url_for('modelo'))
+    flash(f'O modelo {modelo.name} não foi excluído', 'warning')
+    return redirect(url_for('modelo'))
+
 @app.route('/atualizartema/<int:id>', methods=['GET','POST'])
 def atualizartema(id):
     if'email' not in session:
@@ -103,10 +114,31 @@ def atualizarproduto(id):
         produto.preco = form.preco.data
         produto.desconto = form.desconto.data
         produto.estoque = form.estoque.data
-        produto.modelo_id = modelo
-        produto.tema_id = tema
         produto.cor = form.cor.data
         produto.descricao = form.descricao.data
+        produto.modelo_id = modelo
+        produto.tema_id = tema
+
+        if request.files.get('imagem_1'):
+            try:
+                os.unlink(os.path.join(current_app.root_path,"static/imagens/" + produto.imagem_1))
+                produto.imagem_1 = photos.save(request.files.get('imagem_1'),name=secrets.token_hex(10)+".")
+            except:
+                produto.imagem_1 = photos.save(request.files.get('imagem_1'),name=secrets.token_hex(10)+".")
+
+        if request.files.get('imagem_2'):
+            try:
+                os.unlink(os.path.join(current_app.root_path,"static/imagens/" + produto.imagem_2))
+                produto.imagem_2 = photos.save(request.files.get('imagem_2'),name=secrets.token_hex(10)+".")
+            except:
+                produto.imagem_2 = photos.save(request.files.get('imagem_2'),name=secrets.token_hex(10)+".")
+
+        if request.files.get('imagem_3'):
+            try:
+                os.unlink(os.path.join(current_app.root_path,"static/imagens/" + produto.imagem_3))
+                produto.imagem_3 = photos.save(request.files.get('imagem_3'),name=secrets.token_hex(10)+".")
+            except:
+                produto.imagem_3 = photos.save(request.files.get('imagem_3'),name=secrets.token_hex(10)+".")
 
         db.session.commit()
         flash(f'O produto foi atualizado com sucesso', 'success')
