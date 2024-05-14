@@ -4,6 +4,12 @@ from loja import db, app, photos
 from .models import Modelo, Tema, Addproduto
 import secrets, os
 
+@app.route('/')
+def home():
+    produtos = Addproduto.query.filter(Addproduto.estoque >0)
+    return render_template('produtos/index.html', produtos=produtos)
+    
+
 @app.route('/addmodelo', methods=['GET','POST'])
 def addmodelo():
     if'email' not in session:
@@ -87,6 +93,39 @@ def deletemodelo(id):
     flash(f'O modelo {modelo.name} não foi excluído', 'warning')
     return redirect(url_for('modelo'))
 
+@app.route('/deletetema/<int:id>', methods=['GET','POST'])
+def deletetema(id):
+    tema = Tema.query.get_or_404(id)
+    if request.method=='POST':
+        db.session.delete(tema)
+        db.session.commit()
+        flash(f'O tema {tema.name} foi excluído com sucesso', 'success')
+        return redirect(url_for('tema'))
+    flash(f'O tema {tema.name} não foi excluído', 'warning')
+    return redirect(url_for('tema'))
+
+@app.route('/deleteproduto/<int:id>', methods=['GET','POST'])
+def deleteproduto(id):
+    produto = Addproduto.query.get_or_404(id)
+    if request.method=='POST':
+        if request.files.get('imagem_1'):
+            try:
+                os.unlink(os.path.join(current_app.root_path,"static/imagens/" + produto.imagem_1))
+                os.unlink(os.path.join(current_app.root_path,"static/imagens/" + produto.imagem_2))
+                os.unlink(os.path.join(current_app.root_path,"static/imagens/" + produto.imagem_3))
+             
+            except Exception as e:
+                print(f"Erro: {e}")   
+            
+        db.session.delete(produto)
+        db.session.commit()
+        flash(f'Produto {produto.nome} foi excluído com sucesso', 'success')  
+        return redirect(url_for('admin'))
+    flash(f'Produto {produto.nome} não foi excluído', 'success')    
+    return redirect(url_for('admin'))
+
+
+
 @app.route('/atualizartema/<int:id>', methods=['GET','POST'])
 def atualizartema(id):
     if'email' not in session:
@@ -142,7 +181,7 @@ def atualizarproduto(id):
 
         db.session.commit()
         flash(f'O produto foi atualizado com sucesso', 'success')
-        return redirect('/')
+        return redirect('/admin')
 
     form.nome.data = produto.nome
     form.preco.data = produto.preco

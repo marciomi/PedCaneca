@@ -5,7 +5,7 @@
 {% include '_messages.html'%}
 <div class="cointainer">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/">Administrador</a>
+        <a class="navbar-brand" href="/admin">Administrador</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -13,7 +13,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="/">Produtos<span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="/admin">Produtos<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/modelos">Modelos</a>
@@ -57,7 +57,9 @@
                 <td>{{modelo.id}}</td>
                 <td>{{modelo.name}}</td>
                 <td><a href="{{url_for('atualizarmodelo', id=modelo.id)}}" class="btn btn-sm btn-outline-success">Editar</a></td>
-                <td><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#exampleModal-{{modelo.id}}">Exluir</button></td>
+                <td>
+                  <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#exampleModal-{{modelo.id}}">Exluir</button>
+                </td>
             </tr>
 <div class="modal fade" id="exampleModal-{{modelo.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog" role="document">
@@ -72,7 +74,7 @@
         <span class="text-danger">Deseja realmente excluir o modelo "{{modelo.name}}"?</span>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
         <form action="{{url_for('deletemodelo', id=modelo.id)}}" method="POST">
           <button type="submit" class="btn btn-danger">Excluir</button>
         </form>
@@ -91,11 +93,37 @@
                 <td>{{tema.id}}</td>
                 <td>{{tema.name}}</td>
                 <td><a href="{{url_for('atualizartema', id=tema.id)}}" class="btn btn-sm btn-outline-success">Editar</a></td>
-                <td><a href="" class="btn btn-sm btn-outline-warning">Apagar</a></td>
+                <td>
+                  <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#exampleModal-{{tema.id}}">Exluir</button>
+                </td>
             </tr>
-           {% endfor %}
 
-            {% endif %}
+<div class="modal fade" id="exampleModal-{{tema.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{tema.name}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span class="text-danger">Deseja realmente excluir o tema "{{tema.name}}"?</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+        <form action="{{url_for('deletetema', id=tema.id)}}" method="POST">
+          <button type="submit" class="btn btn-danger">Excluir</button>
+        </form>
+            
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+           {% endfor %}
+           {% endif %}
 
         </tbody>
 
