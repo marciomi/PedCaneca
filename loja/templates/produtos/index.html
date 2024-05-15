@@ -11,24 +11,19 @@
   
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <a class="nav-link" href="/">Todos Produtos</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Dropdown
+            Modelos de canecas
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Something else here</a>
+            {% for modelo in modelos %}
+            <a class="dropdown-item" href="{{url_for('get_modelo', id=modelo.id)}}">{{modelo.name}}</a>
+            {% endfor %}            
           </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#">Disabled</a>
-        </li>
+          </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -39,18 +34,47 @@
 </div>
 <div class="container">
     <div class="row">
-        {% for produto in produtos %}
+      {% if modelo %}
+      {% for m in modelo %}
+      <div class="col-md-3">
+          <div class="card">
+              <img src="{{url_for('static', filename='imagens/' + m.imagem_1)}}" alt="{{m.nome}}" class="card-img-top" height="180">
+              <div class="card-body">
+                {% if m.desconto > 0 %}
+                <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); position: absolute; top: 50%; left: 25%;">Desconto {{m.desconto}} %</h5>
+                {% endif %}
+                <h4 class="text-center">{{m.nome}}</h4>
+                <p class="text-center">Preço R$ {{m.preco}}</p>
+              </div>
+              <div class="card-footer text-center">
+                  <a href="#" class="float-left btn btn-sm btn-success mr-sm-2">Detalhes Produto</a>
+                  <a href="#" class="float-rigth btn btn-sm btn-warning">Comprar</a>
+              </div>
+          </div>
+      </div>
+      {% endfor %}
+
+      {% else %}
+
+      {% for produto in produtos %}
         <div class="col-md-3">
             <div class="card">
-                <img src="" alt="">
-                <div class="card-body"></div>
-                <div class="card-footer">
-                    <a href="#" class="flot-left btn btn-sm btn-success">Detalhes do Produto</a>
-                    <a href="#" class="flot-rigth btn btn-sm btn-warning">Adicionar Carrinho</a>
+                <img src="{{url_for('static', filename='imagens/' + produto.imagem_1)}}" alt="{{produto.nome}}" class="card-img-top" height="180">
+                <div class="card-body">
+                  {% if produto.desconto > 0 %}
+                  <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); position: absolute; top: 50%; left: 25%;">Desconto {{produto.desconto}} %</h5>
+                  {% endif %}
+                  <h4 class="text-center">{{produto.nome}}</h4>
+                  <p class="text-center">Preço R$ {{produto.preco}}</p>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="#" class="float-left btn btn-sm btn-success mr-sm-2">Detalhes Produto</a>
+                    <a href="#" class="float-rigth btn btn-sm btn-warning">Comprar</a>
                 </div>
             </div>
         </div>
         {% endfor %}
+        {% endif %}
     </div>
 </div>
 {% endblock content %}

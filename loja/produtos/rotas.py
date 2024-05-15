@@ -7,8 +7,13 @@ import secrets, os
 @app.route('/')
 def home():
     produtos = Addproduto.query.filter(Addproduto.estoque >0)
-    return render_template('produtos/index.html', produtos=produtos)
+    modelos = Modelo.query.all()
+    return render_template('produtos/index.html', produtos=produtos, modelos=modelos)
     
+@app.route('/modelo/<int:id>')
+def get_modelo(id):
+    modelo = Addproduto.query.filter_by(modelo_id=id)
+    return render_template('produtos/index.html', modelo=modelo)
 
 @app.route('/addmodelo', methods=['GET','POST'])
 def addmodelo():

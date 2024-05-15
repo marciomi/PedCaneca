@@ -18,8 +18,7 @@
             {{ render_field(form.desconto, class="form-control", placeholder="Desconto do produto")}}
             {{ render_field(form.estoque, class="form-control", placeholder="Quantidade do produto em estoque")}}
 
-
-            <label for="modelo">Adicionar um Modelo</label>
+            <label for="modelo">Modelo:</label>
             <select name="modelo" id="modelo" class="form-control" required>
                 <option value="{{produto.modelo_id}}">{{produto.modelo.name}}</option>
                 {% for modelo in modelos %}
@@ -27,7 +26,7 @@
                 {% endfor %}
             </select>
 
-            <label for="tema">Adicionar um Tema</label>
+            <label for="tema">Tema:</label>
             <select name="tema" id="tema" class="form-control" required>
                 <option value="{{produto.tema_id}}">{{produto.tema.name}}</option>
                 {% for tema in temas %}
@@ -37,13 +36,17 @@
 
             {{ render_field(form.cor, class="form-control", placeholder="Cor do produto")}}
             {{ render_field(form.descricao, class="form-control", placeholder="Descrição do produto",rows="10")}}
-
-            <div class="cointainer">
-                <div class="row">
-                    <div class="col-md-4">{{ render_field(form.imagem_1, class="form-control")}}</div>
-                    <div class="col-md-4">{{ render_field(form.imagem_2, class="form-control")}}</div>
-                    <div class="col-md-4">{{ render_field(form.imagem_3, class="form-control")}}</div>
-                </div>
+            <div class="card">
+                <img src="{{url_for('static', filename='imagens/' + produto.imagem_1)}}" width="150" height="80">
+                <div class="col-md-10">{{ render_field(form.imagem_1, class="form-control")}}</div>
+            </div>
+            <div class="card">
+                <img src="{{url_for('static', filename='imagens/' + produto.imagem_2)}}" width="150" height="80">
+                <div class="col-md-10">{{ render_field(form.imagem_2, class="form-control")}}</div>
+            </div>
+            <div class="card">
+                <img src="{{url_for('static', filename='imagens/' + produto.imagem_3)}}" width="150" height="80">
+                <div class="col-md-10">{{ render_field(form.imagem_3, class="form-control")}}</div>
             </div>
             
             <button type="submit" class="btn btn-outline-info mt-4 mb-5">Atualizar Produto</button>            
