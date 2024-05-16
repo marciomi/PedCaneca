@@ -4,7 +4,7 @@
 
 <div class="container">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/">Página Inicial</a>
+    <a class="navbar-brand" href="/admin">Página Administrativa</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -14,6 +14,18 @@
         <li class="nav-item">
           <a class="nav-link" href="/">Todos Produtos</a>
         </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Temas
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            {% for tema in temas %}
+            <a class="dropdown-item" href="{{url_for('get_tema', id=tema.id)}}">{{tema.name}}</a>
+            {% endfor %}            
+          </div>
+          </li>
+
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Modelos de canecas
@@ -24,10 +36,12 @@
             {% endfor %}            
           </div>
           </li>
+
+
       </ul>
       <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        <input class="form-control mr-sm-2" type="search" placeholder="Digite o texto p/ buscar" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
       </form>
     </div>
   </nav>
@@ -41,7 +55,7 @@
               <img src="{{url_for('static', filename='imagens/' + m.imagem_1)}}" alt="{{m.nome}}" class="card-img-top" height="180">
               <div class="card-body">
                 {% if m.desconto > 0 %}
-                <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); position: absolute; top: 50%; left: 25%;">Desconto {{m.desconto}} %</h5>
+                <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); top: 50%; left: 25%;">Desconto {{m.desconto}} %</h5>
                 {% endif %}
                 <h4 class="text-center">{{m.nome}}</h4>
                 <p class="text-center">Preço R$ {{m.preco}}</p>
@@ -54,6 +68,26 @@
       </div>
       {% endfor %}
 
+      {% elif get_tema_prod %}
+      {% for get_tema in get_tema_prod %}
+      <div class="col-md-3">
+        <div class="card">
+            <img src="{{url_for('static', filename='imagens/' + get_tema.imagem_1)}}" alt="{{get_tema.nome}}" class="card-img-top" height="180">
+            <div class="card-body">
+              {% if get_tema.desconto > 0 %}
+              <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); top: 50%; left: 25%;">Desconto {{get_tema.desconto}} %</h5>
+              {% endif %}
+              <h4 class="text-center">{{get_tema.nome}}</h4>
+              <p class="text-center">Preço R$ {{get_tema.preco}}</p>
+            </div>
+            <div class="card-footer text-center">
+                <a href="#" class="float-left btn btn-sm btn-success mr-sm-2">Detalhes Produto</a>
+                <a href="#" class="float-rigth btn btn-sm btn-warning">Comprar</a>
+            </div>
+        </div>
+      </div>
+      {% endfor %}
+
       {% else %}
 
       {% for produto in produtos %}
@@ -62,7 +96,7 @@
                 <img src="{{url_for('static', filename='imagens/' + produto.imagem_1)}}" alt="{{produto.nome}}" class="card-img-top" height="180">
                 <div class="card-body">
                   {% if produto.desconto > 0 %}
-                  <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); position: absolute; top: 50%; left: 25%;">Desconto {{produto.desconto}} %</h5>
+                  <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); position: absolute; top: 45%; left: 25%;">Desconto {{produto.desconto}} %</h5>
                   {% endif %}
                   <h4 class="text-center">{{produto.nome}}</h4>
                   <p class="text-center">Preço R$ {{produto.preco}}</p>

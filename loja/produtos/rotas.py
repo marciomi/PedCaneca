@@ -7,13 +7,23 @@ import secrets, os
 @app.route('/')
 def home():
     produtos = Addproduto.query.filter(Addproduto.estoque >0)
-    modelos = Modelo.query.all()
-    return render_template('produtos/index.html', produtos=produtos, modelos=modelos)
+    modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
+    temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
+    return render_template('produtos/index.html', produtos=produtos, modelos=modelos, temas=temas)
     
 @app.route('/modelo/<int:id>')
 def get_modelo(id):
     modelo = Addproduto.query.filter_by(modelo_id=id)
-    return render_template('produtos/index.html', modelo=modelo)
+    modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
+    temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
+    return render_template('produtos/index.html', modelo=modelo, modelos=modelos, temas=temas)
+
+@app.route('/temas/<int:id>')
+def get_tema(id):
+    get_tema_prod = Addproduto.query.filter_by(tema_id=id)
+    modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
+    temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
+    return render_template('produtos/index.html', get_tema_prod=get_tema_prod, temas=temas, modelos=modelos)
 
 @app.route('/addmodelo', methods=['GET','POST'])
 def addmodelo():
