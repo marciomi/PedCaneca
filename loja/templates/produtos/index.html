@@ -49,7 +49,7 @@
 <div class="container">
     <div class="row">
       {% if modelo %}
-      {% for m in modelo %}
+      {% for m in modelo.items %}
       <div class="col-md-3">
           <div class="card">
               <img src="{{url_for('static', filename='imagens/' + m.imagem_1)}}" alt="{{m.nome}}" class="card-img-top" height="180">
@@ -67,9 +67,41 @@
           </div>
       </div>
       {% endfor %}
+    </div>
+
+    <div class="row">
+      <div class="col text-center">
+
+        {% if modelo.has_prev %}
+        <a href="{{url_for('get_modelo', id=get_modelo.id, pagina=modelo.prv_num)}}" class="btn btn-outline-success btn-sm mt-3">Anterior</a>
+        {% endif %}
+
+        {% for page_num in modelo.iter_pages() %}
+        {% if page_num %}
+
+        {% if modelo.paginas == page_num %}
+        <a href="{{url_for('get_modelo', id=get_modelo.id, pagina=page_num)}}" class="btn btn-success btn-sm mt-3">{{page_num}}</a>
+        {% else %}
+        <a href="{{url_for('get_modelo', id=get_modelo.id, pagina=page_num)}}" class="btn btn-outline-success btn-sm mt-3">{{page_num}}</a>
+        {% endif %}
+
+        {% else %}
+        ...
+        {% endif %}
+
+        {% endfor %}
+
+        {% if modelo.has_next %}
+        <a href="{{url_for('get_modelo', id=get_modelo.id, pagina=modelo.next_num)}}" class="btn btn-outline-success btn-sm mt-3">Próxima</a>
+        {% endif %}        
+      </div>
+    </div>
+
+    <div class="row">
 
       {% elif get_tema_prod %}
-      {% for get_tema in get_tema_prod %}
+      {% for get_tema in get_tema_prod.items %}
+      
       <div class="col-md-3">
         <div class="card">
             <img src="{{url_for('static', filename='imagens/' + get_tema.imagem_1)}}" alt="{{get_tema.nome}}" class="card-img-top" height="180">
@@ -87,10 +119,40 @@
         </div>
       </div>
       {% endfor %}
+    </div>
 
+    <div class="row">
+      <div class="col text-center">
+
+        {% if get_tema_prod.has_prev %}
+        <a href="{{url_for('get_tema', id=get_tema.id, pagina=get_tema_prod.prv_num)}}" class="btn btn-outline-success btn-sm mt-3">Anterior</a>
+        {% endif %}
+
+        {% for page_num in get_tema_prod.iter_pages() %}
+        {% if page_num %}
+
+        {% if get_tema_prod.paginas == page_num %}
+        <a href="{{url_for('get_tema', id=get_tema.id, pagina=page_num)}}" class="btn btn-success btn-sm mt-3">{{page_num}}</a>
+        {% else %}
+        <a href="{{url_for('get_tema', id=get_tema.id, pagina=page_num)}}" class="btn btn-outline-success btn-sm mt-3">{{page_num}}</a>
+        {% endif %}
+
+        {% else %}
+        ...
+        {% endif %}
+
+        {% endfor %}
+
+        {% if get_tema_prod.has_next %}
+        <a href="{{url_for('get_tema', id=get_tema.id, pagina=get_tema_prod.next_num)}}" class="btn btn-outline-success btn-sm mt-3">Próxima</a>
+        {% endif %}        
+      </div>
+    </div>
+
+    <div class="row">
       {% else %}
 
-      {% for produto in produtos %}
+      {% for produto in produtos.items %}
         <div class="col-md-3">
             <div class="card">
                 <img src="{{url_for('static', filename='imagens/' + produto.imagem_1)}}" alt="{{produto.nome}}" class="card-img-top" height="180">
@@ -108,7 +170,36 @@
             </div>
         </div>
         {% endfor %}
-        {% endif %}
     </div>
+    
+    <div class="row">
+      <div class="col text-center">
+
+        {% if produtos.has_prev %}
+        <a href="{{url_for('home', pagina=produtos.prv_num)}}" class="btn btn-outline-success btn-sm mt-3">Anterior</a>
+        {% endif %}
+
+        {% for page_num in produtos.iter_pages() %}
+        {% if page_num %}
+
+        {% if produtos.paginas == page_num %}
+        <a href="{{url_for('home', pagina=page_num)}}" class="btn btn-success btn-sm mt-3">{{page_num}}</a>
+        {% else %}
+        <a href="{{url_for('home', pagina=page_num)}}" class="btn btn-outline-success btn-sm mt-3">{{page_num}}</a>
+        {% endif %}
+
+        {% else %}
+        ...
+        {% endif %}
+
+        {% endfor %}
+
+        {% if produtos.has_next %}
+        <a href="{{url_for('home', pagina=produtos.next_num)}}" class="btn btn-outline-success btn-sm mt-3">Próxima</a>
+        {% endif %}        
+      </div>
+    </div>
+      {% endif %}
 </div>
+
 {% endblock content %}

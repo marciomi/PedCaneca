@@ -6,24 +6,29 @@ import secrets, os
 
 @app.route('/')
 def home():
-    produtos = Addproduto.query.filter(Addproduto.estoque >0)
+    pagina = request.args.get('pagina',1, type=int)
+    produtos = Addproduto.query.filter(Addproduto.estoque >0).paginate(page=pagina,per_page=4)
     modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
     temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
-    return render_template('produtos/index.html', produtos=produtos, modelos=modelos, temas=temas)
+    return render_template('produtos/index.html', title='Pedcaneca - Caneca Personalizadas', produtos=produtos, modelos=modelos, temas=temas)
     
 @app.route('/modelo/<int:id>')
 def get_modelo(id):
-    modelo = Addproduto.query.filter_by(modelo_id=id)
+    pagina = request.args.get('pagina',1, type=int)
+    get_modelo = Modelo.query.filter_by(id=id).first_or_404()
+    modelo = Addproduto.query.filter_by(modelo=get_modelo).paginate(page=pagina,per_page=4)
     modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
     temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
-    return render_template('produtos/index.html', modelo=modelo, modelos=modelos, temas=temas)
+    return render_template('produtos/index.html', title='Pedcaneca - Canecas Personalizadas', modelo=modelo, modelos=modelos, temas=temas, get_modelo=get_modelo)
 
 @app.route('/temas/<int:id>')
 def get_tema(id):
-    get_tema_prod = Addproduto.query.filter_by(tema_id=id)
+    pagina = request.args.get('pagina',1, type=int)
+    get_tema = Tema.query.filter_by(id=id).first_or_404()
+    get_tema_prod = Addproduto.query.filter_by(tema=get_tema).paginate(page=pagina,per_page=4)
     modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
     temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
-    return render_template('produtos/index.html', get_tema_prod=get_tema_prod, temas=temas, modelos=modelos)
+    return render_template('produtos/index.html', title='Pedcaneca - Caneca Personalizadas', get_tema_prod=get_tema_prod, temas=temas, modelos=modelos, get_tema=get_tema)
 
 @app.route('/addmodelo', methods=['GET','POST'])
 def addmodelo():
@@ -38,7 +43,7 @@ def addmodelo():
         flash(f'O modelo {getmodelo} cadastrada com sucesso', 'success')
         db.session.commit()
         return redirect(url_for('addmodelo'))
-    return render_template('/produtos/addmodelo.html', modelo='modelo')
+    return render_template('/produtos/addmodelo.html', title='Cadastrar Modelos', modelo='modelo')
 
 @app.route('/addtema', methods=['GET','POST'])
 def addtema():
@@ -53,7 +58,7 @@ def addtema():
         flash(f'O Tema {getmodelo} cadastrada com sucesso', 'success')
         db.session.commit()
         return redirect(url_for('addtema'))
-    return render_template('/produtos/addmodelo.html')
+    return render_template('/produtos/addmodelo.html',title='Cadastrar Temas')
 
 @app.route('/addproduto', methods=['GET','POST'])
 def addproduto():
