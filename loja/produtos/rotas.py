@@ -7,7 +7,7 @@ import secrets, os
 @app.route('/')
 def home():
     pagina = request.args.get('pagina',1, type=int)
-    produtos = Addproduto.query.filter(Addproduto.estoque >0).paginate(page=pagina,per_page=4)
+    produtos = Addproduto.query.filter(Addproduto.estoque >0).order_by(Addproduto.id.desc()).paginate(page=pagina,per_page=4)
     modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
     temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
     return render_template('produtos/index.html', title='Pedcaneca - Caneca Personalizadas', produtos=produtos, modelos=modelos, temas=temas)
@@ -20,6 +20,11 @@ def get_modelo(id):
     modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
     temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
     return render_template('produtos/index.html', title='Pedcaneca - Canecas Personalizadas', modelo=modelo, modelos=modelos, temas=temas, get_modelo=get_modelo)
+
+@app.route('/produto/<int:id>')
+def pagina_unica(id):
+    produto = Addproduto.query.get_or_404(id)
+    return render_template('produtos/pagina_unica.html', title='Pedcaneca - Canecas Personalizadas', produto=produto)
 
 @app.route('/temas/<int:id>')
 def get_tema(id):

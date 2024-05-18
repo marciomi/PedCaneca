@@ -4,7 +4,7 @@
 
 <div class="container">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/admin">Página Administrativa</a>
+    <a class="navbar-brand" href="/">Página Inicial</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -55,13 +55,13 @@
               <img src="{{url_for('static', filename='imagens/' + m.imagem_1)}}" alt="{{m.nome}}" class="card-img-top" height="180">
               <div class="card-body">
                 {% if m.desconto > 0 %}
-                <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); top: 50%; left: 25%;">Desconto {{m.desconto}} %</h5>
+                <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); position: absolute; top: 45%; left: 25%;">Desconto {{m.desconto}} %</h5>
                 {% endif %}
                 <h4 class="text-center">{{m.nome}}</h4>
                 <p class="text-center">Preço R$ {{m.preco}}</p>
               </div>
               <div class="card-footer text-center">
-                  <a href="#" class="float-left btn btn-sm btn-success mr-sm-2">Detalhes Produto</a>
+                  <a href="{{url_for('pagina_unica',id=m.id)}}" class="float-left btn btn-sm btn-success mr-sm-2">Detalhes Produto</a>
                   <a href="#" class="float-rigth btn btn-sm btn-warning">Comprar</a>
               </div>
           </div>
@@ -73,10 +73,11 @@
       <div class="col text-center">
 
         {% if modelo.has_prev %}
-        <a href="{{url_for('get_modelo', id=get_modelo.id, pagina=modelo.prv_num)}}" class="btn btn-outline-success btn-sm mt-3">Anterior</a>
+        
+        <a href="{{url_for('get_modelo', id=get_modelo.id, pagina=modelo.prev_num)}}" class="btn btn-outline-success btn-sm mt-3">Anterior</a>
         {% endif %}
-
-        {% for page_num in modelo.iter_pages() %}
+        {% if modelo.total > 4 %}
+        {% for page_num in modelo.iter_pages(left_edge=1, right_edge=2, left_current=1, right_current=2) %}
         {% if page_num %}
 
         {% if modelo.paginas == page_num %}
@@ -89,8 +90,8 @@
         ...
         {% endif %}
 
-        {% endfor %}
-
+        {% endfor %}        
+        {% endif %}
         {% if modelo.has_next %}
         <a href="{{url_for('get_modelo', id=get_modelo.id, pagina=modelo.next_num)}}" class="btn btn-outline-success btn-sm mt-3">Próxima</a>
         {% endif %}        
@@ -107,13 +108,13 @@
             <img src="{{url_for('static', filename='imagens/' + get_tema.imagem_1)}}" alt="{{get_tema.nome}}" class="card-img-top" height="180">
             <div class="card-body">
               {% if get_tema.desconto > 0 %}
-              <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); top: 50%; left: 25%;">Desconto {{get_tema.desconto}} %</h5>
+              <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); position: absolute; top: 45%; left: 25%;">Desconto {{get_tema.desconto}} %</h5>
               {% endif %}
               <h4 class="text-center">{{get_tema.nome}}</h4>
               <p class="text-center">Preço R$ {{get_tema.preco}}</p>
             </div>
             <div class="card-footer text-center">
-                <a href="#" class="float-left btn btn-sm btn-success mr-sm-2">Detalhes Produto</a>
+                <a href="{{url_for('pagina_unica',id=get_tema.id)}}" class="float-left btn btn-sm btn-success mr-sm-2">Detalhes Produto</a>
                 <a href="#" class="float-rigth btn btn-sm btn-warning">Comprar</a>
             </div>
         </div>
@@ -125,12 +126,13 @@
       <div class="col text-center">
 
         {% if get_tema_prod.has_prev %}
-        <a href="{{url_for('get_tema', id=get_tema.id, pagina=get_tema_prod.prv_num)}}" class="btn btn-outline-success btn-sm mt-3">Anterior</a>
+        
+        <a href="{{url_for('get_tema', id=get_tema.id, pagina=get_tema_prod.prev_num)}}" class="btn btn-outline-success btn-sm mt-3">Anterior</a>
         {% endif %}
-
-        {% for page_num in get_tema_prod.iter_pages() %}
+        {% if get_tema_prod.total > 4 %}
+        {% for page_num in get_tema_prod.iter_pages(left_edge=1, right_edge=2, left_current=1, right_current=2) %}
         {% if page_num %}
-
+        
         {% if get_tema_prod.paginas == page_num %}
         <a href="{{url_for('get_tema', id=get_tema.id, pagina=page_num)}}" class="btn btn-success btn-sm mt-3">{{page_num}}</a>
         {% else %}
@@ -142,7 +144,7 @@
         {% endif %}
 
         {% endfor %}
-
+        {% endif %}
         {% if get_tema_prod.has_next %}
         <a href="{{url_for('get_tema', id=get_tema.id, pagina=get_tema_prod.next_num)}}" class="btn btn-outline-success btn-sm mt-3">Próxima</a>
         {% endif %}        
@@ -164,7 +166,7 @@
                   <p class="text-center">Preço R$ {{produto.preco}}</p>
                 </div>
                 <div class="card-footer text-center">
-                    <a href="#" class="float-left btn btn-sm btn-success mr-sm-2">Detalhes Produto</a>
+                    <a href="{{url_for('pagina_unica',id=produto.id)}}" class="float-left btn btn-sm btn-success mr-sm-2">Detalhes Produto</a>
                     <a href="#" class="float-rigth btn btn-sm btn-warning">Comprar</a>
                 </div>
             </div>
@@ -176,10 +178,10 @@
       <div class="col text-center">
 
         {% if produtos.has_prev %}
-        <a href="{{url_for('home', pagina=produtos.prv_num)}}" class="btn btn-outline-success btn-sm mt-3">Anterior</a>
+        <a href="{{url_for('home', pagina=produtos.prev_num)}}" class="btn btn-outline-success btn-sm mt-3">Anterior</a>
         {% endif %}
-
-        {% for page_num in produtos.iter_pages() %}
+        {% if produtos.total > 4 %}
+        {% for page_num in produtos.iter_pages(left_edge=1, right_edge=2, left_current=1, right_current=2) %}
         {% if page_num %}
 
         {% if produtos.paginas == page_num %}
@@ -193,7 +195,7 @@
         {% endif %}
 
         {% endfor %}
-
+        {% endif %}
         {% if produtos.has_next %}
         <a href="{{url_for('home', pagina=produtos.next_num)}}" class="btn btn-outline-success btn-sm mt-3">Próxima</a>
         {% endif %}        
