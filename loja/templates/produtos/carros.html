@@ -1,0 +1,72 @@
+{% extends 'layouts.html' %}
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container">
+    {% include '_messages.html'%}
+    <div class="row">
+        <div class="col-md-12">
+        <table class="table table-sm">
+            <thead>
+
+                <th>Código</th>
+                <th>Imagem</th>
+                <th>Nome</th>
+                <th>Cor</th>
+                <th>Preço</th>
+                <th>Quantidade</th>
+                <th>Desconto</th>
+                <th>SubTotal</th>
+                <th>Atualizar</th>
+                <th>Deletar</th>
+
+            </thead>
+
+            <tbody>
+                {% for key , produto in session['LojainCarrinho'].items() %}
+                {% set desconto = "%0.2f" | format((produto.desconto/100) * produto.preco|float) %}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td><img src="{{url_for('static',filename='imagens/'+ produto.imagem)}}" alt="{{produto.name}}" width="50", heigth="50"></td>
+                    <td>{{produto.nome}}</td>
+                    <form action="{{url_for('updateCarro',code=key)}}" method="POST">
+
+
+                        <td>
+                            {% set cor = produto.cor.split(',') %}
+                            <label for="cor"></label>
+                            <select name="cores" id="cores">
+                                <option value="{{produto.cores}}" style="display: none;">{{produto.cor|capitalize}}</option>
+                                {% for cores in cor %}
+                                {% set col = cores.split(':') %}
+                                <option value="{{col[0]}}">{{col[0]|capitalize}}</option>
+                                {% endfor %}
+                            </select>
+                            
+                        </td>
+                        <td>R$ {{produto.preco}}</td>
+                        <td><input type="number" name="quantidade" min="1" max="20" value="{{produto.quantidade}}"></td>
+                        {% if produto.desconto > 0 %}
+                        <td>{{produto.desconto}}%=R$ {{desconto}}</td>
+                        {% else %}
+                        <td></td>
+                        {% endif %}
+                        {% set subtotal = produto.quantidade|int * produto.preco|float %}
+                        <td>R$ {{"%0.2f"|format((subtotal|float) - desconto|float)}}</td>
+                        <td><button type="submit" class="btn btn-sm btn-success">Atualizar</button></td>
+                    </form>
+                    <td><a href="">Apagar</a></td>                    
+                </tr>
+                {% endfor %}
+                
+                <tr>
+                    <td></td>
+                    <td><a href="/">Voltar</a></td>
+                    <td colspan="3">Imposto(6%): R$ {{imposto}}</td>
+                    <td colspan="5">Valor a Pagar: R$ {{valorpagar}}</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>    
+    </div>
+</div>
+{% endblock content %}

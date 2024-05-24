@@ -24,7 +24,9 @@ def get_modelo(id):
 @app.route('/produto/<int:id>')
 def pagina_unica(id):
     produto = Addproduto.query.get_or_404(id)
-    return render_template('produtos/pagina_unica.html', title='Pedcaneca - Canecas Personalizadas', produto=produto)
+    modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
+    temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
+    return render_template('produtos/pagina_unica.html', title='Pedcaneca - Canecas Personalizadas', produto=produto, modelos=modelos, temas=temas)
 
 @app.route('/temas/<int:id>')
 def get_tema(id):

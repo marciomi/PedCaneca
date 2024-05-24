@@ -35,9 +35,11 @@
             <a class="dropdown-item" href="{{url_for('get_modelo', id=modelo.id)}}">{{modelo.name}}</a>
             {% endfor %}            
           </div>
-          </li>
+        </li>
 
-
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('getCart')}}" tabindex="-1">Carrinho({{session['LojainCarrinho']|length}})</a>
+        </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" placeholder="Digite o texto p/ buscar" aria-label="Search">
@@ -52,7 +54,7 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-6" id="m_imagem">
-            <img src="{{url_for('static', filename='imagens/' + produto.imagem_1)}}" alt="{{produto.nome}}" height="400" height="400">
+            <img src="{{url_for('static', filename='imagens/' + produto.imagem_1)}}" alt="{{produto.nome}}" width="400">
         </div>
     
 
@@ -63,17 +65,50 @@
             {% if produto.desconto > 0 %}
             <p>Desconto: {{produto.desconto}}%</p>
             {% endif %}
+            <hr>
             <b>Descrição:</b>
             <p>{{produto.descricao}}</p>
+            <hr>
+            <form action="{{url_for('AddCart')}}" method="POST">
+              <input type="hidden" name="produto_id" value="{{produto.id}}">
+              <button type="submit" class="btn btn-sm btn-warning">Adicionar ao Carrinho</button>
+              <label for="">Quantidade: </label>
+              <input type="number" name="quantidade" id="" value="1" min="1" max="{{produto.estoque}}">
+              {% set cor = produto.cor.split(',') %}
+              <label for="cor">Cor: </label>
+              <select name="cor" id="">
+                {% for cores in cor %}
+                {% set col = cores.split(':') %}
+                <option value="{{col[0]}}">{{col[0]|capitalize}}</option>
+                {% endfor %}
+              </select>
+
+            </form>
+            
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <img src="{{url_for('static', filename='imagens/' + produto.imagem_1)}}" alt="{{produto.nome}}" height="150" height="150">
-            <img src="{{url_for('static', filename='imagens/' + produto.imagem_2)}}" alt="{{produto.nome}}" height="150" height="150">
-            <img src="{{url_for('static', filename='imagens/' + produto.imagem_3)}}" alt="{{produto.nome}}" height="150" height="150">
+        <div class="col-md-12 mt-3" id="s_imagem">
+          <hr>
+            <img src="{{url_for('static', filename='imagens/' + produto.imagem_1)}}" alt="{{produto.nome}}" width="150" class="p-3">
+            <img src="{{url_for('static', filename='imagens/' + produto.imagem_2)}}" alt="{{produto.nome}}" width="150" class="p-3">
+            <img src="{{url_for('static', filename='imagens/' + produto.imagem_3)}}" alt="{{produto.nome}}" width="150" class="p-3">
         </div>
     </div>
 </div>
+
+<script>
+  var m_imagem = document.getElementById('m_imagem');
+  var s_imagem = document.getElementById('s_imagem').getElementsByTagName('img');
+
+  for(var i =0; i < s_imagem.length; i++){
+    s_imagem[i].addEventListener('click', full_imagem);
+  }
+
+  function full_imagem(){
+    var ImagemSRC = this.getAttribute('src');
+    m_imagem.innerHTML ="<img src='"+ ImagemSRC + "' width='400' height='400'>";
+  }
+</script>
 
 {% endblock content %}
