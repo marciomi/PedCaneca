@@ -1,6 +1,8 @@
 from flask import redirect, render_template, url_for, flash, request, session, current_app
 from loja import db, app
 from loja.produtos.models import Addproduto
+from loja.produtos.rotas import modelos, temas
+import json
 
 
 
@@ -24,7 +26,11 @@ def AddCart():
             if 'LojainCarrinho' in session:
                 print(session['LojainCarrinho'])
                 if produto_id in session['LojainCarrinho']:
-                    print("Produto já adicionado no carrinho")
+                    if produto_id in session['LojainCarrinho']:
+                        for key, item in session['LojainCarrinho'].items():
+                            if int(key) ==int(produto_id):
+                                session.modified = True
+                                item['quantidade']+=1
                 else:
                     session['LojainCarrinho'] = M_Dicionarios(session['LojainCarrinho'],DicItems)
                     return redirect(request.referrer)
@@ -40,8 +46,8 @@ def AddCart():
 
 @app.route('/carros')
 def getCart():
-    if 'LojainCarrinho' not in session:
-        return redirect(request.referrer)
+    if 'LojainCarrinho' not in session or len(session['LojainCarrinho']) <=0:
+        return redirect(url_for('home'))
     subtotal = 0
     valorpagar = 0
     for key, produto in session['LojainCarrinho'].items():
@@ -50,12 +56,12 @@ def getCart():
         subtotal -= desconto
         imposto = ("%.2f"% (.06 * float(subtotal)))
         valorpagar = float("%.2f" %(1.06 * subtotal))
-    return render_template('produtos/carros.html', imposto=imposto, valorpagar=valorpagar)
+    return render_template('produtos/carros.html', imposto=imposto, valorpagar=valorpagar, modelos=modelos(), temas=temas())
 
 
 @app.route('/updateCarro/<int:code>', methods=['POST'])
 def updateCarro(code):
-    if 'LojainCarrinho' not in session and len(session['LojainCarrinho'])<0:
+    if 'LojainCarrinho' not in session or len(session['LojainCarrinho']) <=0:
         return redirect(url_for('home'))
     if request.method == "POST":
         quantidade = request.form.get('quantidade')
@@ -71,12 +77,28 @@ def updateCarro(code):
         except Exception as e:
             print(e)
             return redirect(url_for('getCart'))
+        
 
-
-@app.route('/vazio')
-def vazio_Cart():
+@app.route('/deleteitem/<int:id>')
+def deleteitem(id):
+    if 'LojainCarrinho' not in session or len(session['LojainCarrinho'])<=0:
+        return redirect(url_for('home')) 
     try:
-        session.clear()
-        return redirect(url_for('home'))
+        session.modified = True
+        for key, item in session['LojainCarrinho'].items():
+            if int(key) == id:
+                session['LojainCarrinho'].pop(key,None)       
+                flash('Item atualizado com sucesso')
+                return redirect(url_for('GetCart'))                
     except Exception as e:
         print(e)
+        return redirect(url_for('getCart'))
+    
+@app.route('/limparcarro')
+def limparcarro():
+    try:
+        session.pop('LojainCarrinho',None)
+        return redirect(url_for('home'))                
+    except Exception as e:
+        print(e)
+        

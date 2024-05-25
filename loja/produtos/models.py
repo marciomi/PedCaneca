@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 
-class Addproduto(db.Model):
+class Addproduto(db.Model):    
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(80), nullable=False)
     preco = db.Column(db.Numeric(10,2), nullable=False)

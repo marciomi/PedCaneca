@@ -4,38 +4,38 @@ from loja import db, app, photos
 from .models import Modelo, Tema, Addproduto
 import secrets, os
 
+def modelos():
+    modelos = modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
+    return modelos
+
+def temas():
+    temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
+    return temas
+
 @app.route('/')
 def home():
     pagina = request.args.get('pagina',1, type=int)
-    produtos = Addproduto.query.filter(Addproduto.estoque >0).order_by(Addproduto.id.desc()).paginate(page=pagina,per_page=4)
-    modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
-    temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
-    return render_template('produtos/index.html', title='Pedcaneca - Caneca Personalizadas', produtos=produtos, modelos=modelos, temas=temas)
-    
+    produtos = Addproduto.query.filter(Addproduto.estoque >0).order_by(Addproduto.id.desc()).paginate(page=pagina,per_page=4)    
+    return render_template('produtos/index.html', title='Pedcaneca - Caneca Personalizadas', produtos=produtos, modelos=modelos(), temas=temas())
+
 @app.route('/modelo/<int:id>')
 def get_modelo(id):
     pagina = request.args.get('pagina',1, type=int)
     get_modelo = Modelo.query.filter_by(id=id).first_or_404()
     modelo = Addproduto.query.filter_by(modelo=get_modelo).paginate(page=pagina,per_page=4)
-    modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
-    temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
-    return render_template('produtos/index.html', title='Pedcaneca - Canecas Personalizadas', modelo=modelo, modelos=modelos, temas=temas, get_modelo=get_modelo)
+    return render_template('produtos/index.html', title='Pedcaneca - Canecas Personalizadas', modelo=modelo, modelos=modelos(), temas=temas(), get_modelo=get_modelo)
 
 @app.route('/produto/<int:id>')
 def pagina_unica(id):
     produto = Addproduto.query.get_or_404(id)
-    modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
-    temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
-    return render_template('produtos/pagina_unica.html', title='Pedcaneca - Canecas Personalizadas', produto=produto, modelos=modelos, temas=temas)
+    return render_template('produtos/pagina_unica.html', title='Pedcaneca - Canecas Personalizadas', produto=produto, modelos=modelos(), temas=temas())
 
 @app.route('/temas/<int:id>')
 def get_tema(id):
     pagina = request.args.get('pagina',1, type=int)
     get_tema = Tema.query.filter_by(id=id).first_or_404()
     get_tema_prod = Addproduto.query.filter_by(tema=get_tema).paginate(page=pagina,per_page=4)
-    modelos = Modelo.query.join(Addproduto,(Modelo.id == Addproduto.modelo_id)).all()
-    temas = Tema.query.join(Addproduto,(Tema.id == Addproduto.tema_id)).all()
-    return render_template('produtos/index.html', title='Pedcaneca - Caneca Personalizadas', get_tema_prod=get_tema_prod, temas=temas, modelos=modelos, get_tema=get_tema)
+    return render_template('produtos/index.html', title='Pedcaneca - Caneca Personalizadas', get_tema_prod=get_tema_prod, temas=temas(), modelos=modelos(), get_tema=get_tema)
 
 @app.route('/addmodelo', methods=['GET','POST'])
 def addmodelo():
