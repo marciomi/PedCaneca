@@ -18,6 +18,17 @@ def home():
     produtos = Addproduto.query.filter(Addproduto.estoque >0).order_by(Addproduto.id.desc()).paginate(page=pagina,per_page=4)    
     return render_template('produtos/index.html', title='Pedcaneca - Caneca Personalizadas', produtos=produtos, modelos=modelos(), temas=temas())
 
+@app.route('/search', methods=['GET','POST'])
+def search():
+    if request.method =='POST':
+        form = request.form
+        search_value = form['search_string']
+        search = "%{0}%".format(search_value)
+        produtos = Addproduto.query.filter(Addproduto.nome.like(search)).all()
+        return render_template('pesquisar.html', produtos=produtos, modelos=modelos(), temas=temas())
+    else:
+        return redirect('/')
+
 @app.route('/modelo/<int:id>')
 def get_modelo(id):
     pagina = request.args.get('pagina',1, type=int)

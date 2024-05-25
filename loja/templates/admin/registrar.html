@@ -1,22 +1,26 @@
 {% extends "layouts.html" %}
-
 {% block content %}
-
 <div class="container">
-    {% include '_messages.html'%}
-    <div class="text-center h1 text-success"> Registrar Usuários </div>
-    {% from "_formhelpers.html" import render_field %}
-    <form method="post" enctype="multipart/form-data">
-      <div>
-        {{ render_field(form.name, class="form-control") }}
-        {{ render_field(form.username, class="form-control") }}
-        {{ render_field(form.email, class="form-control") }}
-        {{ render_field(form.password, class="form-control") }}
-        {{ render_field(form.confirm, class="form-control") }}
-        <input type="file" name="Foto">
-      </div>
-      <p><input type=submit value="Registrar" class="btn btn-success mt-2"></p>
-    </form>
+  <div class="row">
+    <div class="col-md3"></div>
+      <div class="col-md-6 p-2">            
+            <div class="text-center bg-success p-2 h4">Registrar Usuários</div>
+            {% from "_formhelpers.html" import render_field %}
+            <form method=post>
+              {{ form.csrf_token }}
+            <div>
+              {{ render_field(form.name, class="form-control") }}
+              {{ render_field(form.username, class="form-control") }}
+              {{ render_field(form.email, class="form-control") }}
+              {{ render_field(form.password, class="form-control") }}
+              {{ render_field(form.confirm, class="form-control") }}
+               <input type="file" name="Foto">
+            </div>
+            <p><input type=submit value="Registrar" class="btn btn-success mt-2"></p>
+            </form>
+    </div>
+    <div class="col-md-3"></div>
+  </div>
 </div>
 
 

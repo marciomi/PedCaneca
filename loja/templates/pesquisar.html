@@ -1,0 +1,49 @@
+{% extends 'layouts.html' %}
+
+{% block content %}
+
+{% include 'navbar.html' %}
+
+<div class="container">
+    <div class="row">
+
+
+      {% for produto in produtos %}
+        <div class="col-md-3">
+            <div class="card">
+                <img src="{{url_for('static', filename='imagens/' + produto.imagem_1)}}" alt="{{produto.nome}}" class="card-img-top" height="180" height="180">
+                <div class="card-body">
+                  {% if produto.desconto > 0 %}
+                  <h5 style="text-shadow: 1px 2px 2px #000; color: #f00; transform: rotate(-8deg); position: absolute; top: 45%; left: 25%;">Desconto {{produto.desconto}} %</h5>
+                  {% endif %}
+                  <h4 class="text-center">{{produto.nome}}</h4>
+                  <p class="text-center">Preço R$ {{produto.preco}}</p>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{url_for('pagina_unica',id=produto.id)}}" class="float-left btn btn-sm btn-success">Detalhes</a>
+                    
+                    <form action="{{url_for('AddCart')}}" method="POST">
+                      <input type="hidden" name="produto_id" value="{{produto.id}}">
+                      <button type="submit" class="btn btn-sm btn-warning float-rigth">Adicionar Carrinho</button>
+                      
+                      <input type="hidden" name="quantidade" id="" value="1" min="1" max="{{produto.estoque}}">
+                      {% set cor = produto.cor.split(",") %}
+                     
+                      <select name="cor" id="cor" style="visibility: hidden;">
+                        {% for cores in cor %}
+                        {% set col = cores.split(":") %}
+                        <option value="{{col[0]}}">{{col[0]|capitalize}}</option>
+                        {% endfor %}
+                      </select>
+        
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+</div>
+
+{% endblock content %}
