@@ -1,4 +1,4 @@
-from flask import render_template, session, request, redirect, url_for, flash, current_app
+from flask import render_template, session, request, redirect, url_for, flash, current_app, make_response
 from flask_bcrypt import Bcrypt
 from loja import db, app, photos, bcrypt, login_manager
 from .forms import CadastroclienteForm, ClienteLoginForm
@@ -6,6 +6,7 @@ import secrets
 import os
 from.model import Cadastrar, ClientePedido
 from flask_login import login_required, current_user, login_user, logout_user
+import pdfkit
 
 
 
@@ -52,7 +53,7 @@ def pedido_order():
             db.session.commit()
             session.pop('LojainCarrinho')
             flash('Pedido criado com sucesso', 'success')
-            return redirect(url_for('home'))
+            return redirect(url_for('pedidos',notafiscal=notafiscal))
         except Exception as e:
             print(e)
             flash('Não foi possível processar seu pedido', 'danger')
@@ -77,4 +78,29 @@ def pedidos(notafiscal):
         return redirect(url_for('clienteLogin'))
     return render_template('cliente/pedido.html', notafiscal=notafiscal, imposto=imposto, subTotal=subTotal,  gTotal=gTotal, cliente=cliente, pedidos=pedidos)
 
+@app.route('/get_pdf/<notafiscal>', methods=['POST'])
+@login_required
+def get_pdf(notafiscal):
+    if current_user.is_authenticated:
+        gTotal = 0
+        subTotal = 0
+        cliente_id = current_user.id
+        if request.method=="POST":            
+            cliente = Cadastrar.query.filter_by(id=cliente_id).first()
+            pedidos = ClientePedido.query.filter_by(cliente_id=cliente_id, notafiscal=notafiscal).order_by(ClientePedido.id.desc()).first()
+            for _key, produto in pedidos.pedido.items():
+                desconto = (produto['desconto']/100) * float(produto['preco'])
+                subTotal += float(produto['preco']) * int(produto['quantidade'])
+                subTotal -= desconto
+                imposto =("%.2f" % (.06 * float(subTotal)))
+                gTotal = float("%.2f" % (1.06 * subTotal))    
 
+            rendered = render_template('cliente/pdf.html', notafiscal=notafiscal, imposto=imposto, subTotal=subTotal,  gTotal=gTotal, cliente=cliente, pedidos=pedidos)
+            path_wkhtmltopdf = 'loja/wkhtmltopdf.exe'
+            config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+            pdf = pdfkit.from_string(rendered, False, configuration=config)
+            reponse = make_response(pdf)
+            reponse.headers['content-Type']='application/pdf'
+            reponse.headers['content-Disposition']='inline:filename= '+ notafiscal+'.pdf'
+            return reponse
+    return redirect(url_for('pedidos'))

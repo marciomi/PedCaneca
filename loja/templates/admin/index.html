@@ -30,6 +30,7 @@
                 <a class="dropdown-item" href="addproduto">Produtos</a>
                 <a class="dropdown-item" href="addmodelo">Modelos</a>
                 <a class="dropdown-item" href="addtema">Temas</a>
+                <a class="dropdown-item" href="registrar">Cadastrar usuário Admin</a>
               </div>
             </li>
           </ul>
@@ -61,7 +62,7 @@
             <tr>
                 <td>{{loop.index}}</td>
                 <td>{{produto.nome}}</td>
-                <td>{{produto.preco}}</td>
+                <td>R$ {{produto.preco}}</td>
                 <td>{{produto.desconto}} %</td>
                 <td>{{produto.estoque}}</td>
                 <td>{{produto.modelo.name}}</td>
