@@ -16,7 +16,7 @@ def temas():
 def home():
     pagina = request.args.get('pagina',1, type=int)
     produtos = Addproduto.query.filter(Addproduto.estoque >0).order_by(Addproduto.id.desc()).paginate(page=pagina,per_page=4)    
-    return render_template('produtos/index.html', title='Pedcaneca - Caneca Personalizadas', produtos=produtos, modelos=modelos(), temas=temas())
+    return render_template('produtos/index.html', title='Pedcaneca - Canecas Personalizadas', produtos=produtos, modelos=modelos(), temas=temas())
 
 @app.route('/search', methods=['GET','POST'])
 def search():
@@ -46,7 +46,7 @@ def get_tema(id):
     pagina = request.args.get('pagina',1, type=int)
     get_tema = Tema.query.filter_by(id=id).first_or_404()
     get_tema_prod = Addproduto.query.filter_by(tema=get_tema).paginate(page=pagina,per_page=4)
-    return render_template('produtos/index.html', title='Pedcaneca - Caneca Personalizadas', get_tema_prod=get_tema_prod, temas=temas(), modelos=modelos(), get_tema=get_tema)
+    return render_template('produtos/index.html', title='Pedcaneca - Canecas Personalizadas', get_tema_prod=get_tema_prod, temas=temas(), modelos=modelos(), get_tema=get_tema)
 
 @app.route('/addmodelo', methods=['GET','POST'])
 def addmodelo():
@@ -231,3 +231,42 @@ def atualizarproduto(id):
     
 
     return render_template('/produtos/atualizarproduto.html', title='Atualizar Produtos', form=form, modelos=modelos, temas=temas, produto=produto, modelo=modelo, tema=tema)
+
+#PAGINAS DE ACESSIBILIDADE
+
+@app.route('/index1')
+def home1():
+    pagina = request.args.get('pagina',1, type=int)
+    produtos = Addproduto.query.filter(Addproduto.estoque >0).order_by(Addproduto.id.desc()).paginate(page=pagina,per_page=4)    
+    return render_template('produtos/index1.html', title='Pedcaneca - Canecas Personalizadas', produtos=produtos, modelos=modelos(), temas=temas())
+
+@app.route('/search1', methods=['GET','POST'])
+def search1():
+    if request.method =='POST':
+        form = request.form
+        search_value = form['search_string']
+        search = "%{0}%".format(search_value)
+        produtos = Addproduto.query.filter(Addproduto.nome.like(search)).all()
+        return render_template('pesquisar1.html', produtos=produtos, modelos=modelos(), temas=temas())
+    else:
+        return redirect('/index1')
+    
+@app.route('/modelo1/<int:id>')
+def get_modelo1(id):
+    pagina = request.args.get('pagina',1, type=int)
+    get_modelo1 = Modelo.query.filter_by(id=id).first_or_404()
+    modelo = Addproduto.query.filter_by(modelo=get_modelo1).paginate(page=pagina,per_page=4)
+    return render_template('produtos/index1.html', title='Pedcaneca - Canecas Personalizadas', modelo=modelo, modelos=modelos(), temas=temas(), get_modelo1=get_modelo1)
+
+@app.route('/temas1/<int:id>')
+def get_tema1(id):
+    pagina = request.args.get('pagina',1, type=int)
+    get_tema1 = Tema.query.filter_by(id=id).first_or_404()
+    get_tema_prod = Addproduto.query.filter_by(tema=get_tema1).paginate(page=pagina,per_page=4)
+    return render_template('produtos/index1.html', title='Pedcaneca - Canecas Personalizadas', get_tema_prod=get_tema_prod, temas=temas(), modelos=modelos(), get_tema1=get_tema1)
+
+@app.route('/produto1/<int:id>')
+def pagina_unica1(id):
+    produto = Addproduto.query.get_or_404(id)
+    return render_template('produtos/pagina_unica1.html', title='Pedcaneca - Canecas Personalizadas', produto=produto, modelos=modelos(), temas=temas())
+

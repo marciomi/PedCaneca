@@ -55,7 +55,8 @@ def getCart():
         subtotal += float(produto['preco']) * int(produto['quantidade'])
         subtotal -= desconto
         imposto = ("%.2f"% (.06 * float(subtotal)))
-        valorpagar = float("%.2f" %(1.06 * subtotal))
+#        valorpagar = float("%.2f" %(1.06 * subtotal))
+        valorpagar = subtotal
     return render_template('produtos/carros.html', imposto=imposto, valorpagar=valorpagar, modelos=modelos(), temas=temas())
 
 
@@ -102,3 +103,62 @@ def limparcarro():
     except Exception as e:
         print(e)
         
+#PAGINAS DE ACESSIBILIDADE
+
+@app.route('/carros1')
+def getCart1():
+    if 'LojainCarrinho' not in session or len(session['LojainCarrinho']) <=0:
+        return redirect(url_for('home1'))
+    subtotal = 0
+    valorpagar = 0
+    for key, produto in session['LojainCarrinho'].items():
+        desconto = (produto['desconto']/100) * float(produto['preco'])
+        subtotal += float(produto['preco']) * int(produto['quantidade'])
+        subtotal -= desconto
+        imposto = ("%.2f"% (.06 * float(subtotal)))
+#        valorpagar = float("%.2f" %(1.06 * subtotal))
+        valorpagar = subtotal
+    return render_template('produtos/carros1.html', imposto=imposto, valorpagar=valorpagar, modelos=modelos(), temas=temas())
+
+@app.route('/limparcarro1')
+def limparcarro1():
+    try:
+        session.pop('LojainCarrinho',None)
+        return redirect(url_for('home1'))                
+    except Exception as e:
+        print(e)
+
+@app.route('/updateCarro1/<int:code>', methods=['POST'])
+def updateCarro1(code):
+    if 'LojainCarrinho' not in session or len(session['LojainCarrinho']) <=0:
+        return redirect(url_for('home1'))
+    if request.method == "POST":
+        quantidade = request.form.get('quantidade')
+        cores = request.form.get('cores')
+        try:
+            session.modified = True
+            for key, item in session['LojainCarrinho'].items():
+                if int(key) == code:
+                    item['quantidade']= quantidade
+                    item['cores']= cores
+                    flash('Item atualizado com sucesso')
+                    return redirect(url_for('GetCart1'))                
+        except Exception as e:
+            print(e)
+            return redirect(url_for('getCart1'))
+
+@app.route('/deleteitem1/<int:id>')
+def deleteitem1(id):
+    if 'LojainCarrinho' not in session or len(session['LojainCarrinho'])<=0:
+        return redirect(url_for('home1')) 
+    try:
+        session.modified = True
+        for key, item in session['LojainCarrinho'].items():
+            if int(key) == id:
+                session['LojainCarrinho'].pop(key,None)       
+                flash('Item atualizado com sucesso')
+                return redirect(url_for('GetCart1'))                
+    except Exception as e:
+        print(e)
+        return redirect(url_for('getCart1'))
+    

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedcaneca - Canecas Personalizadas</title>
+  <link rel="icon" href="{{ url_for('static', filename='imagens/icone_caneca.png') }}" type="image/x-icon">             
+  <style>
+    .font-bold {
+      font-weight: bold;
+    }
+    .text-right {
+      text-align: right;
+    }
+  </style>
+</head>
+{% extends 'layouts.html' %}
+
+{% block content %}
+
+
+      {% if cliente %}
+
+{% include 'navbar.html' %}
+
+<div class="container-fluid">
+  {% include '_messages.html'%}
+  <div class="row">
+    <div class="col-md-12">
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <br>
+            <strong>Cliente: </strong>{{cliente.name}}
+            <br>
+            <strong>Email: </strong>{{cliente.email}}
+            <br>
+            <strong>Telefone: </strong>{{cliente.contact}}
+            <br>
+            <br>
+          </div>
+          <div>
+            <img src="{{ url_for('static', filename='imagens/icone_caneca.png') }}" alt="Logo" style="max-width: 150px;">
+          </div>
+        </div>
+        
+        {% for pedido in pedidos %}
+        <div>
+          <strong>Numero do Pedido: </strong>{{pedido.notafiscal}}
+          <br>
+          <strong>Status: </strong>{{pedido.status}}
+          <br>
+          <strong>Data do Pedido: </strong>{{pedido.data_criado}}h
+          <br><br>
+
+          <table class="table table-sm">
+            <thead>
+              <th>Código</th>                
+              <th>Nome</th>
+              <th>Cor</th>
+              <th>Preço</th>
+              <th>Quantidade</th>
+              <th>Desconto</th>
+              <th>SubTotal</th>
+            </thead>
+            <tbody>
+              {% for key, produto in pedido.pedido.items() %}
+              {% set desconto = "%0.2f" | format((produto.desconto/100) * produto.preco|float) %}
+              <tr>
+                <td>{{loop.index}}</td>
+                <td>{{produto.nome}}</td>
+                <form action="{{url_for('updateCarro',code=key)}}" method="post">
+                  <td>{{produto.cor|capitalize}}</td>
+                  <td>R$ {{produto.preco}}</td>
+                  <td>{{produto.quantidade}}</td>
+                  {% if produto.desconto > 0 %}
+                  <td>{{produto.desconto}}%=R$ {{desconto}}</td>
+                  {% else %}
+                  <td></td>
+                  {% endif %}
+                  {% set subtotal = produto.quantidade|int * produto.preco|float %}
+                  <td>R$ {{"%0.2f"|format((subtotal|float) - desconto|float)}}</td>
+                </form>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          
+          <table class="table table-sm float-right">
+              <tr>
+                <td><a href="{{url_for('home')}}" class="btn btn-success btn-sm">Efetuar Pagamento</a></td>
+                <td>
+                  <form id="pdfForm" action="{{url_for('get_pdf', notafiscal=pedido.notafiscal)}}" method="post" target="_blank">
+                    <button type="submit" class="btn btn-warning btn-sm float-right">Gerar PDF</button>
+                  </form>
+                </td>
+                <td colspan="5" class="text-right"><strong>Valor a Pagar: R$ {{"%0.2f"|format(pedido.valor_total)}}</strong></td>
+              </tr>
+          </table>
+            
+        </div>
+        {% endfor %}
+      
+
+
+
+
+      {% elif pedidos_por_cliente %}
+      {% include '_messages.html'%}
+      <div class="container-fluid" >
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #7E52A0;">
+          <a class="navbar-brand" href="/" style="margin-right: auto; text-align: center;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <img src="{{ url_for('static', filename='imagens/icone_caneca_PedCaneca.png') }}" title="Página Inicial" width="70" height="70">
+            </div>
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+            
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto font-weight-bold">
+                  <li class="nav-item">
+                    <a class="nav-link" style="color: white;" href="/admin">Home Admin</a>
+                  </li>
+                  <li class="nav-item active">
+                    <a class="nav-link" style="color: white;" href="/admin">Todos Produtos<span class="sr-only">(current)</span></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" style="color: white;" href="/modelos">Modelos</a>
+                  </li>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" style="color: white;" href="/tema">Temas</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" style="color: white;" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Adicionar
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" style="color: red; font-weight: bold;" href="addproduto">Produtos</a>
+                      <a class="dropdown-item" style="color: red; font-weight: bold;" href="addmodelo">Modelos</a>
+                      <a class="dropdown-item" style="color: red; font-weight: bold;" href="addtema">Temas</a>
+                      <a class="dropdown-item" style="color: red; font-weight: bold;" href="registrar">Cadastrar usuário Admin</a>
+                    </div>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" style="color: white;" href="{{url_for('listar_pedidos')}}">Listar Pedidos</a>
+                  </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                  <input class="form-control mr-sm-2" type="search" placeholder="Digite o texto p/ buscar" aria-label="Search">
+                  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                </form>
+              </div>
+            </nav>
+      </div>
+      
+
+      <div>
+        <input type="text" id="clienteFiltro" placeholder="Filtrar por Cliente" onkeyup="filtrarClientes()">
+        <input type="text" id="emailFiltro" placeholder="Filtrar por Email" onkeyup="filtrarClientes()">
+        <input type="text" id="telefoneFiltro" placeholder="Filtrar por Telefone" onkeyup="filtrarClientes()">
+        <input type="text" id="numeroPedidoFiltro" placeholder="Filtrar por Numero do Pedido" onkeyup="filtrarPedidos()">
+        <select id="statusFiltro" onchange="filtrarPedidos()">
+          <option value="">Filtrar por Status</option>
+          <option value="pendente">Pendente</option>
+          <option value="pago">Pago</option>
+          <option value="cancelado">Cancelado</option>
+          <option value="em transporte">Em Transporte</option>
+          <option value="entregue">Entregue</option>
+        </select>
+        <input type="text" id="dataPedidoFiltro" placeholder="Filtrar por Data" onkeyup="filtrarPedidos()">
+      </div>
+      
+      <div id="pedidosContainer">
+        {% for item in pedidos_por_cliente %}
+        <div class="cliente" data-name="{{ item.cliente.name }}" data-email="{{ item.cliente.email }}" data-telefone="{{ item.cliente.contact }}">
+          <hr style="border-width: 5px; border-color: red;">
+          <div style="display: flex; align-items: center; font-size: 1.2em; white-space: nowrap;">
+            <div>
+              <strong>Cliente:</strong> {{ item.cliente.name }} |
+              <strong>Email:</strong> {{ item.cliente.email }} |
+              <strong>Telefone:</strong> {{ item.cliente.contact }}
+            </div>
+          </div>
+      
+          {% for pedido in item.pedidos %}
+          <div class="pedido" data-numero="{{pedido.notafiscal}}" data-status="{{pedido.status}}" data-data="{{pedido.data_criado}}">
+            <div style="display: flex; align-items: center; font-size: 0.9em; white-space: nowrap;">
+              <div>
+                <strong>Numero do Pedido:</strong> {{pedido.notafiscal}} |
+                <select onchange="atualizarStatus(this, '{{ pedido.notafiscal }}')">
+                  <option value="pendente" {% if pedido.status == 'pendente' %}selected{% endif %}>Pendente</option>
+                  <option value="pago" {% if pedido.status == 'pago' %}selected{% endif %}>Pago</option>
+                  <option value="cancelado" {% if pedido.status == 'cancelado' %}selected{% endif %}>Cancelado</option>
+                  <option value="em transporte" {% if pedido.status == 'em transporte' %}selected{% endif %}>Em Transporte</option>
+                  <option value="entregue" {% if pedido.status == 'entregue' %}selected{% endif %}>Entregue</option>
+                </select> |
+                <strong>Data do Pedido:</strong> {{pedido.data_criado}}h
+              </div>
+            </div>
+      
+            <table class="table table-sm" style="font-size: 0.9em;">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Nome</th>
+                  <th>Cor</th>
+                  <th>Preço</th>
+                  <th>Quantidade</th>
+                  <th>Desconto</th>
+                  <th>SubTotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for key, produto in pedido.pedido.items() %}
+                {% set desconto = "%0.2f" | format((produto.desconto/100) * produto.preco|float) %}
+                <tr>
+                  <td>{{loop.index}}</td>
+                  <td>{{produto.nome}}</td>
+                  <form action="{{url_for('updateCarro',code=key)}}" method="post">
+                    <td>{{produto.cor|capitalize}}</td>
+                    <td>R$ {{produto.preco}}</td>
+                    <td>{{produto.quantidade}}</td>
+                    {% if produto.desconto > 0 %}
+                    <td>{{produto.desconto}}%=R$ {{desconto}}</td>
+                    {% else %}
+                    <td></td>
+                    {% endif %}
+                    {% set subtotal = produto.quantidade|int * produto.preco|float %}
+                    <td>R$ {{"%0.2f"|format((subtotal|float) - desconto|float)}}</td>
+                  </form>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+      
+            <table class="table table-sm float-right" style="font-size: 0.9em;">
+              <tr>
+                <td colspan="5" class="text-right"><strong>Valor a Pagar: R$ {{"%0.2f"|format(pedido.valor_total)}}</strong></td>
+              </tr>
+            </table>
+            <hr style="margin-top: 42px; border-width: 2px; border-color: black;">
+          </div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+      
+      {% else %}
+      <p>Nenhum pedido encontrado.</p>
+      {% endif %}
+      
+      <script>
+      function filtrarClientes() {
+        var clienteFiltro = document.getElementById('clienteFiltro').value.toLowerCase();
+        var emailFiltro = document.getElementById('emailFiltro').value.toLowerCase();
+        var telefoneFiltro = document.getElementById('telefoneFiltro').value.toLowerCase();
+        var clientes = document.getElementsByClassName('cliente');
+        var numeroPedidoFiltro = document.getElementById('numeroPedidoFiltro').value.toLowerCase();
+        var statusFiltro = document.getElementById('statusFiltro').value.toLowerCase();
+        var dataPedidoFiltro = document.getElementById('dataPedidoFiltro').value.toLowerCase();
+      
+        for (var i = 0; i < clientes.length; i++) {
+          var cliente = clientes[i];
+          var nome = cliente.getAttribute('data-name').toLowerCase();
+          var email = cliente.getAttribute('data-email').toLowerCase();
+          var telefone = cliente.getAttribute('data-telefone').toLowerCase();
+          var pedidos = cliente.getElementsByClassName('pedido');
+          var exibirCliente = false;
+      
+          for (var j = 0; j < pedidos.length; j++) {
+            var pedido = pedidos[j];
+            var numero = pedido.getAttribute('data-numero').toLowerCase();
+            var status = pedido.getAttribute('data-status').toLowerCase();
+            var data = pedido.getAttribute('data-data').toLowerCase();
+      
+            if (numero.includes(numeroPedidoFiltro) && status.includes(statusFiltro) && data.includes(dataPedidoFiltro)) {
+              exibirCliente = true;
+              break;
+            }
+          }
+      
+          if (nome.includes(clienteFiltro) && email.includes(emailFiltro) && telefone.includes(telefoneFiltro) && exibirCliente) {
+            cliente.style.display = '';
+          } else {
+            cliente.style.display = 'none';
+          }
+        }
+      }
+      
+      function filtrarPedidos() {
+        var numeroPedidoFiltro = document.getElementById('numeroPedidoFiltro').value.toLowerCase();
+        var statusFiltro = document.getElementById('statusFiltro').value.toLowerCase();
+        var dataPedidoFiltro = document.getElementById('dataPedidoFiltro').value.toLowerCase();
+        var pedidos = document.getElementsByClassName('pedido');
+      
+        for (var i = 0; i < pedidos.length; i++) {
+          var pedido = pedidos[i];
+          var numero = pedido.getAttribute('data-numero').toLowerCase();
+          var status = pedido.getAttribute('data-status').toLowerCase();
+          var data = pedido.getAttribute('data-data').toLowerCase();
+      
+          if (numero.includes(numeroPedidoFiltro) && status.includes(statusFiltro) && data.includes(dataPedidoFiltro)) {
+            pedido.style.display = '';
+          } else {
+            pedido.style.display = 'none';
+          }
+        }
+      }
+      
+      function atualizarStatus(selectElement, notafiscal) {
+        var status = selectElement.value;
+      
+        // Simulando uma solicitação AJAX para atualizar o status no servidor
+        fetch('/atualizar_status', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ notafiscal: notafiscal, status: status })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Status atualizado com sucesso!');
+          } else {
+            console.log('Falha ao atualizar o status.');
+          }
+        })
+        .catch(error => {
+          console.error('Erro:', error);
+        });
+      }
+      </script>
+      
+      
+      
+      
+            
+
+            
+    </div>    
+  </div>
+</div>
+    </div>    
+  </div>
+</div>
+
+{% endblock content %}

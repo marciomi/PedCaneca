@@ -45,7 +45,7 @@ class ClientePedido(db.Model):
     notafiscal = db.Column(db.String(20), unique= True, nullable=False)
     status = db.Column(db.String(20), default='pendente', nullable=False)
     cliente_id = db.Column(db.Integer, unique= False, nullable=False)
-    data_criado = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    data_criado = db.Column(db.DateTime, default=datetime.now().replace(microsecond=0), nullable=False)
     pedido = db.Column(JsonEcodeDict)
 
     def __repr__(self):

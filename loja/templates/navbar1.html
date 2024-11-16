@@ -1,0 +1,75 @@
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="{{url_for('home1')}}" style="margin-right: auto; text-align: center;">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <img src="{{ url_for('static', filename='imagens/icone_caneca_PedCaneca.png') }}" title="Página Inicial" width="70" height="70">
+        </div>
+      </a>        
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto font-weight-bold">
+            <li class="nav-item">
+              <a class="nav-link" style="color: red;" href="{{url_for('home1')}}">Todos Produtos</a>
+            </li>
+    
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" style="color:red;" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Temas
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                {% for tema in temas %}
+                <a class="dropdown-item" style="color: red; font-weight: bold;" href="{{url_for('get_tema1', id=tema.id)}}">{{tema.name}}</a>
+                {% endfor %}            
+              </div>
+              </li>
+    
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" style="color:red;" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Modelos de canecas
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                {% for modelo in modelos %}
+                <a class="dropdown-item" style="color: red; font-weight: bold;" href="{{url_for('get_modelo1', id=modelo.id)}}">{{modelo.name}}</a>
+                {% endfor %}            
+              </div>
+              </li>
+              {% if current_user.is_authenticated %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" style="color:red;" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Bem vindo(a) {{current_user.name}}
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">                  
+                  <a class="dropdown-item" style="color: red; font-weight: bold;" href="{{url_for('pedidos_cliente', cliente_id=current_user.id)}}">Seus pedidos</a>                        
+                </div>
+              <li class="nav-item">
+                <a class="nav-link" style="color:red;" href="{{url_for('cliente_logout1')}}">Sair</a>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a class="nav-link" style="color:red;" href="{{url_for('cadastrar_clientes1')}}">Criar conta</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" style="color:red;" href="{{url_for('clienteLogin1')}}">Entrar</a>
+              </li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="nav-link" style="color:red;" href="{{url_for('getCart1')}}" tabindex="-1">Carrinho({{session['LojainCarrinho']|length}})</a>
+              </li>
+    
+          </ul>
+          <form class="form-inline my-2 my-lg-0" method="POST">
+            <input class="form-control mr-sm-1" type="text" placeholder="Pesquisar" autofocus="autofocus" name="search_string" style="width: 150px; height: 30px; font-size: 15px" >
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" formaction="/search1" title="Pesquisar"> 
+              <img src="{{ url_for('static', filename='imagens/lupa.png') }}" alt="Pesquisar" width="25" height="25">
+            </button>
+            <a class="nav-link" href="/" > <img src="{{ url_for('static', filename='imagens/acessibilidade2.png') }}" title="Acessibilidade" width="95" height="40"> </a>
+          </form>
+          
+
+          
+        </div>
+      </nav>
+    </div>

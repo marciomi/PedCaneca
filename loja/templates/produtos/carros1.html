@@ -11,7 +11,32 @@
                 background-size: cover; /* Ajusta a imagem para cobrir toda a tela */ 
                 background-repeat: no-repeat; /* Não repetir a imagem */ 
                 background-attachment: fixed; /* A imagem de fundo fica fixa ao rolar a página */ 
-                }              
+                } 
+
+              .btn
+                { 
+                transition: transform 0.2s, filter 0.2s; /* Transições suaves para transformações e filtros */ 
+                } 
+
+              .btn:hover,
+              .btn:focus  
+                { 
+                  transform: scale(1.6); /* Aumenta o tamanho do botão ao passar o mouse */ 
+                  filter: contrast(10); /* Aumenta o contraste para ajudar deficientes visuais */ 
+                }
+
+              a { 
+                  transition: transform 0.2s, filter 0.2s; /* Transições suaves para transformações e filtros */                         
+                } 
+              
+              a:hover,
+              a:focus
+                { 
+                  transform: scale(1.6); /* Aumenta o tamanho do link ao passar o mouse */ 
+                  filter: contrast(1); /* Aumenta o contraste */ 
+                  background-color: white; /* Cor de fundo preto */                                                                    
+                }
+               
               </style> 
              
   </head>
@@ -20,7 +45,7 @@
 
 {% block content %}
 
-{% include 'navbar.html' %}
+{% include 'navbar1.html' %}
 
 <div class="container-fluid">
     {% include '_messages.html'%}
@@ -49,7 +74,7 @@
                     <td>{{loop.index}}</td>
                     <td><img src="{{url_for('static',filename='imagens/'+ produto.imagem)}}" alt="{{produto.name}}" width="50", heigth="50"></td>
                     <td>{{produto.nome}}</td>
-                    <form action="{{url_for('updateCarro',code=key)}}" method="post">
+                    <form action="{{url_for('updateCarro1',code=key)}}" method="post">
 
 
                         <td>
@@ -75,7 +100,7 @@
                         <td>R$ {{"%0.2f"|format((subtotal|float) - desconto|float)}}</td>
                         <td><button type="submit" class="btn btn-sm btn-success">Atualizar</button></td>
                     </form>
-                    <td><a href="{{url_for('deleteitem',id=key)}}" class="btn btn-sm btn-danger">Apagar</a></td>                    
+                    <td><a href="{{url_for('deleteitem1',id=key)}}" class="btn btn-sm btn-danger">Apagar</a></td>                    
                 </tr>
                 {% endfor %}
             </tbody>
@@ -85,12 +110,12 @@
                 <tr>
                     <td></td>
                     
-                    <td><a href="{{url_for('pedido_order')}}" class="btn btn-success btn-sm float-left">Processar Compra</a></td>
+                    <td><a href="{{url_for('pedido_order1')}}" class="btn btn-success btn-sm float-left">Processar Compra</a></td>
                     <!-- RETIRADO IMPOSTO
                     <td colspan="3">Imposto(6%): R$ {{imposto}}</td>
                     -->
                     <td><a href="{{url_for('limparcarro')}}" class="btn btn-danger btn-sm float-rigth">Limpar carrinho</a></td>
-                    <td colspan="5"><strong>Valor a Pagar: R$ {{valorpagar}}</strong></td>                    
+                    <td colspan="5" ><strong>Valor a Pagar: R$ {{valorpagar}}</strong></td>
                 </tr>
             </table>
         </div>    
