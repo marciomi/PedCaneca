@@ -14,6 +14,7 @@ import stripe
 publishable_key = 'pk_test_51QLvO3C6EyAXa8556fixSAOiCkDVAjI6xP7bqgvqDJ4b5BRuV4Z0IWyKYM44x1miqrBu8Hb2GmEHo4sLga0yJY7W00pnnBpGHJ'
 stripe.api_key = 'sk_test_51QLvO3C6EyAXa855SjPCA9XD6Fgy7bZbSRoFo6JlFDDMmdJolEN5PKyPtIXxTbhzZTOaH4oUF9Pgv3U0hCoox1CR004oN7lFxX'
 
+
 @app.route('/pagamento', methods=['POST'])
 @login_required
 def pagamento():
