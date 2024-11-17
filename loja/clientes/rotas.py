@@ -1,4 +1,4 @@
-from flask import render_template, session, request, redirect, url_for, flash, current_app, make_response
+from flask import render_template, session, request, redirect, url_for, flash, current_app, make_response, Flask, jsonify
 from flask_bcrypt import Bcrypt
 from loja import db, app, photos, bcrypt, login_manager
 from .forms import CadastroclienteForm, ClienteLoginForm
@@ -8,6 +8,38 @@ from .model import Cadastrar, ClientePedido
 from flask_login import login_required, current_user, login_user, logout_user
 import pdfkit
 import base64
+import stripe
+
+
+publishable_key = 'pk_test_51QLvO3C6EyAXa8556fixSAOiCkDVAjI6xP7bqgvqDJ4b5BRuV4Z0IWyKYM44x1miqrBu8Hb2GmEHo4sLga0yJY7W00pnnBpGHJ'
+stripe.api_key = 'sk_test_51QLvO3C6EyAXa855SjPCA9XD6Fgy7bZbSRoFo6JlFDDMmdJolEN5PKyPtIXxTbhzZTOaH4oUF9Pgv3U0hCoox1CR004oN7lFxX'
+
+@app.route('/pagamento', methods=['POST'])
+@login_required
+def pagamento():
+    notafiscal = request.form.get('invoice')
+    amount = request.form.get('amount')
+    
+    customer = stripe.Customer.create(
+        email=request.form['stripeEmail'],
+        source=request.form['stripeToken'],
+    )
+
+    charge = stripe.Charge.create(
+        customer=customer.id,
+        description='PedCaneca',
+        amount=int(amount),
+        currency='brl',
+    )
+    cliente_pedido = ClientePedido.query.filter_by(cliente_id=current_user.id, notafiscal=notafiscal).order_by(ClientePedido.id.desc()).first()
+    cliente_pedido.status='pago'
+    db.session.commit()
+    return redirect(url_for('obrigado'))
+   
+@app.route('/obrigado')
+def obrigado():
+    return render_template('cliente/obrigado.html')
+
 
 @app.route('/cliente/cadastrar', methods=['GET','POST'])
 def cadastrar_clientes():
@@ -40,12 +72,23 @@ def cliente_logout():
     logout_user()
     return redirect(url_for('home'))
 
+def atualizarlojaCarro():
+    for _key, produto in session['LojainCarrinho'].items():
+        session.modified = True
+        del produto['imagem']
+        del produto['cor']
+
+    return atualizarlojaCarro
+
+
 @app.route('/pedido_order')
 @login_required
 def pedido_order():
     if current_user.is_authenticated:
         cliente_id = current_user.id
         notafiscal = secrets.token_hex(5)
+        atualizarlojaCarro()
+
         try:
             p_order = ClientePedido(notafiscal=notafiscal, cliente_id=cliente_id, pedido=session['LojainCarrinho'])
             db.session.add(p_order)
@@ -177,8 +220,6 @@ def atualizar_status():
         db.session.commit()
         return jsonify(success=True)
     return jsonify(success=False)
-
-
 
 
 

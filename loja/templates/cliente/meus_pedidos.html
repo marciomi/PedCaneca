@@ -13,6 +13,7 @@
       text-align: right;
     }
   </style>
+  
 </head>
 {% extends 'layouts.html' %}
 
@@ -88,7 +89,22 @@
           
           <table class="table table-sm float-right">
               <tr>
-                <td><a href="{{url_for('home')}}" class="btn btn-success btn-sm">Efetuar Pagamento</a></td>
+                <form action="{{url_for('pagamento')}}" method="POST">
+                  {% set amount = pedido.valor_total * 100 %}
+                  <input type="hidden" name="amount" value="{{amount}}">
+                  <input type="hidden" name="invoice" value="{{pedido.notafiscal}}">
+
+                  <script
+                    src="https://checkout.stripe.com/checkout.js"
+                    class="stripe-button margin-top: 20px;"
+                    data-key="pk_test_51QLvO3C6EyAXa8556fixSAOiCkDVAjI6xP7bqgvqDJ4b5BRuV4Z0IWyKYM44x1miqrBu8Hb2GmEHo4sLga0yJY7W00pnnBpGHJ"
+                    data-name="PedCaneca"
+                    data-description="Compra Segura"
+                    data-amount="{{amount|int}}"
+                    data-currency="brl"
+                    data-label="Efetuar Pagamento">
+                  </script>
+                </form>
                 <td>
                   <form id="pdfForm" action="{{url_for('get_pdf', notafiscal=pedido.notafiscal)}}" method="post" target="_blank">
                     <button type="submit" class="btn btn-warning btn-sm float-right">Gerar PDF</button>
@@ -97,6 +113,7 @@
                 <td colspan="5" class="text-right"><strong>Valor a Pagar: R$ {{"%0.2f"|format(pedido.valor_total)}}</strong></td>
               </tr>
           </table>
+          <hr style="margin-top: 54px; border-width: 2px; border-color: black;">
             
         </div>
         {% endfor %}
