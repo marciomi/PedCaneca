@@ -71,10 +71,7 @@
             <table class="table table-sm float-right">
                 <tr>
                     <td><a href="{{url_for('home')}}" class="btn btn-success btn-sm">Efetuar Pagamento</a></td>
-                    <td>
-                    <!--RETIRADO IMPOSTO
-                    <td colspan="3">Imposto(6%): R$ {{imposto}}</td>
-                    -->
+                    <td>                   
                     <td>
                         <form id="pdfForm" action="{{url_for('get_pdf', notafiscal=pedidos.notafiscal)}}" method="post" target="_blank">
                             <button type="submit" class="btn btn-warning btn-sm float-right">Gerar PDF</button>
